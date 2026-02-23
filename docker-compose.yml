@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   legacy-api:
     build:
@@ -6,3 +8,25 @@ services:
     restart: always
     ports:
       - "4040:4040"
+    networks:
+      - recruitment-network
+
+  new-api:
+    build:
+      context: ./new-recruitment-api
+    container_name: new-api
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - LEGACY_API_URL=http://legacy-api:4040
+      - LEGACY_API_KEY=0194ec39-4437-7c7f-b720-7cd7b2c8d7f4
+    depends_on:
+      - legacy-api
+    networks:
+      - recruitment-network
+
+networks:
+  recruitment-network:
+    driver: bridge
